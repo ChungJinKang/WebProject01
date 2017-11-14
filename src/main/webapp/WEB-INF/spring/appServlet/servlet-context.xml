@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:jee="http://www.springframework.org/schema/jee"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -36,77 +33,52 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
 
-	<context:component-scan
-		base-package="com.multi.myapp" />
+	<context:component-scan base-package="com.multi" />
 
 	<bean id="dataSource2"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
-		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"></property>
-		<property name="username" value="hr"></property>
-		<property name="password" value="hr"></property>
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/wondoo?useSSL=false&amp;serverTimezone=UTC"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="1234"></property>
 	</bean>
+	<!-- <bean id="dataSource2" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property> 
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"></property> 
+		<property name="username" value="hr"></property> <property name="password" 
+		value="hr"></property> </bean> -->
 	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property> 
 		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"></property> 
 		<property name="username" value="hr"></property> <property name="password" 
 		value="hr"></property> </bean> -->
 
-	<!-- <bean name="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
-		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
-		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"></property>
-		<property name="username" value="hr"></property>
-		<property name="password" value="hr"></property>
-	</bean> -->
+	<!-- <bean name="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"> 
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property> 
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"></property> 
+		<property name="username" value="hr"></property> <property name="password" 
+		value="hr"></property> </bean> -->
 
 	<!-- JNDI 기반의 설정 설정 예시 -->
-	<!-- <jee:jndi-lookup id="dataSource" jndi-name="jdbc/myoracle"
-		resource-ref="true" />   -->
-	<bean class="org.springframework.jdbc.core.JdbcTemplate" id="jdbcTemplate">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
+	<!-- <jee:jndi-lookup id="dataSource" jndi-name="jdbc/myoracle" resource-ref="true" 
+		/> -->
+	<!-- <bean class="org.springframework.jdbc.core.JdbcTemplate" id="jdbcTemplate"> 
+		<property name="dataSource" ref="dataSource" /> </bean> -->
 
-<!-- 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource"></property>
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource2"></property>
 		<property name="configLocation" value="classpath:/mybatis_config.xml"></property>
 		<property name="mapperLocations" value="classpath:mappers/**/*Mapper.xml"></property>
 	</bean>
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate"
 		destroy-method="clearCache">
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>
-	</bean> -->
-
-
-	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basenames">
-			<list>
-				<value>mymessage.greeting</value>
-				<value>mymessage.error</value>
-				<value>mymessage.call</value>
-
-			</list>
-		</property>
 	</bean>
-
-	<bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
-		<constructor-arg ref="dataSource2" />
-		<property name="logFormatter">
-			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
-				<property name="loggingType" value="MULTI_LINE" />
-				<property name="sqlPrefix" value="SQL문장:" />
-			</bean>
-		</property>
-	</bean>
- 
-	<!-- <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"> 
-		<property name="exceptionMappings"> <props> <prop key="java.lang.ArithmeticException"> 
-		error/arithmeticException </prop> <prop key="java.lang.Exception"> errorPage 
-		</prop> </props> </property> </bean> -->
 
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-		p:dataSource-ref="dataSource" />
+		p:dataSource-ref="dataSource2" />
 	<!-- tx 반영 로직 범위 설정, tx 기능의 객체와 매핑 :모든 메서드에 적용 -->
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
@@ -117,4 +89,20 @@
 	<aop:config>
 		<aop:advisor advice-ref="txAdvice" pointcut="within(lab2.spring.di..*)" />
 	</aop:config>
+
+	<!-- <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"> 
+		<property name="basenames"> <list> <value>mymessage.greeting</value> <value>mymessage.error</value> 
+		<value>mymessage.call</value> </list> </property> </bean> -->
+
+	<!-- <bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource"> 
+		<constructor-arg ref="dataSource2" /> <property name="logFormatter"> <bean 
+		class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter"> <property name="loggingType" 
+		value="MULTI_LINE" /> <property name="sqlPrefix" value="SQL문장:" /> </bean> 
+		</property> </bean> -->
+
+	<!-- <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"> 
+		<property name="exceptionMappings"> <props> <prop key="java.lang.ArithmeticException"> 
+		error/arithmeticException </prop> <prop key="java.lang.Exception"> errorPage 
+		</prop> </props> </property> </bean> -->
+
 </beans>
